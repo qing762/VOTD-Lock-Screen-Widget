@@ -18,18 +18,19 @@ const bibleVersion = 111; // NIV
 const date = new Date();
 const dayOfYear = Math.floor((date - new Date(date.getFullYear(), 0, 0)) / 1000 / 60 / 60 / 24) - 1;
 
-// Get all Verse of the Days
+// Get all VOTDs
 let request = new Request('https://nodejs.bible.com/api/moments/votd/3.1');
 let votds = await request.loadJSON();
 votds = votds['votd'];
 
-// Get Verse of the Day for today
-request = new Request(`https://nodejs.bible.com/api/bible/verse/3.1?id=${bibleVersion}&reference=${votds[dayOfYear]['usfm'][0]}`);
+// Get VOTD for today
+let usfm = votds[dayOfYear]['usfm'];
+request = new Request(`https://nodejs.bible.com/api/bible/verse/3.1?id=${bibleVersion}&reference=${usfm[0]}`);
 let votd = await request.loadJSON();
 
 // Create widget
 let widget = new ListWidget();
-// Redirect to Verse of the Day when clicked
+// Redirect to VOTD when clicked
 widget.url = 'youversion://verse-of-the-day';
 
 // Add the verse content
@@ -42,6 +43,12 @@ content.minimumScaleFactor = 6 / textSize;
 let reference = widget.addText(votd['reference']['human']);
 reference.font = Font.regularMonospacedSystemFont(textSize);
 reference.textOpacity = textOpacity;
+
+// If VOTD is multiple verses
+if (usfm.length > 1) {
+    content.text += ' ...';
+    reference.text = `${votd['reference']['human']}-${usfm[usfm.length - 1].split('.')[2]}`;
+}
 
 // Set widget
 Script.setWidget(widget);
