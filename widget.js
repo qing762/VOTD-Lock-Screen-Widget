@@ -12,7 +12,7 @@
 // Customizations
 const textSize = 10;
 const textOpacity = 0.7;
-const bibleVersion = 111; // NIV
+const bibleVersion = 68; // GNT
 
 // Find day of the year (0-365)
 const date = new Date();
